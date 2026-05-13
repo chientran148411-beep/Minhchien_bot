@@ -1,2 +1,0 @@
-# Minhchien_bot
-  Public
