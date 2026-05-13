@@ -33,7 +33,7 @@ import re
 # BOT TOKEN
 # =========================================
 
-TOKEN = "8710597616:AAHMg3o10lZnGEWLEr8CkYzFTa1WAuKrITY"
+TOKEN = "8927671568:AAEIs-A6sS3H2KljAHpQ3hBvwYyYhnobPUo"
 
 # =========================================
 # DATABASE MEMORY
