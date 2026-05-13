@@ -1,10 +1,8 @@
-# =========================================
-# TELEGRAM ADVANCED GROUP MANAGER BOT
-# FULL VERSION
-# =========================================
-
-# INSTALL:
-# pip install python-telegram-bot==20.7
+# ==================================================
+# TELEGRAM ADVANCED MANAGER BOT
+# STABLE VERSION FOR RENDER + GITHUB
+# PYTHON-TELEGRAM-BOT v20.7
+# ==================================================
 
 from telegram import (
     Update,
@@ -26,35 +24,42 @@ from telegram.constants import (
     ChatMemberStatus,
 )
 
-import asyncio
 import re
+import asyncio
 
-# =========================================
-# BOT TOKEN
-# =========================================
+# ==================================================
+# TOKEN
+# ==================================================
 
-TOKEN = "8927671568:AAEIs-A6sS3H2KljAHpQ3hBvwYyYhnobPUo"
+TOKEN = "8620336521:AAG_u9AYArtryE9fGjJ1R8gny8NtoO4tUgo"
 
-# =========================================
+# ==================================================
 # DATABASE MEMORY
-# =========================================
+# ==================================================
 
 warnings_db = {}
 group_lang = {}
 afk_users = {}
 
-# =========================================
+# ==================================================
 # MULTI LANGUAGE
-# =========================================
+# ==================================================
 
 LANG = {
 
     "vi": {
 
-        "menu": "📌 MENU QUẢN TRỊ",
+        "start":
+        "🤖 Bot quản trị đã online.",
 
-        "link_deleted":
-        "🚫 Bạn không được gửi link trong nhóm.",
+        "menu":
+        "📌 MENU QUẢN TRỊ",
+
+        "help":
+        "✅ Bot đang hoạt động.",
+
+        "pong":
+        "🏓 Pong!",
 
         "muted":
         "🔇 Đã mute",
@@ -69,13 +74,16 @@ LANG = {
         "⚠️ Cảnh cáo",
 
         "autoban":
-        "🚫 Đã tự động ban vì đủ 3 cảnh cáo.",
+        "🚫 Đã tự động ban do đủ 3 cảnh cáo.",
 
         "resetwarn":
         "✅ Đã reset cảnh cáo.",
 
+        "link_deleted":
+        "🚫 Không được gửi link.",
+
         "welcome":
-        "👋 Chào mừng bạn đến nhóm!",
+        "👋 Chào mừng",
 
         "afk":
         "💤 Đã bật AFK",
@@ -83,17 +91,24 @@ LANG = {
         "afk_off":
         "✅ Đã tắt AFK",
 
-        "lang_changed":
+        "lang":
         "🌍 Đã đổi ngôn ngữ",
 
     },
 
     "en": {
 
-        "menu": "📌 ADMIN MENU",
+        "start":
+        "🤖 Bot online.",
 
-        "link_deleted":
-        "🚫 You cannot send links here.",
+        "menu":
+        "📌 ADMIN MENU",
+
+        "help":
+        "✅ Bot is working.",
+
+        "pong":
+        "🏓 Pong!",
 
         "muted":
         "🔇 Muted",
@@ -113,8 +128,11 @@ LANG = {
         "resetwarn":
         "✅ Warnings reset.",
 
+        "link_deleted":
+        "🚫 Links are not allowed.",
+
         "welcome":
-        "👋 Welcome to the group!",
+        "👋 Welcome",
 
         "afk":
         "💤 AFK enabled",
@@ -122,33 +140,62 @@ LANG = {
         "afk_off":
         "✅ AFK disabled",
 
-        "lang_changed":
+        "lang":
         "🌍 Language changed",
 
     }
 }
 
-# =========================================
-# GET LANG
-# =========================================
+# ==================================================
+# GET LANGUAGE
+# ==================================================
 
 def get_lang(chat_id):
+
     return group_lang.get(chat_id, "vi")
 
-# =========================================
+# ==================================================
 # START
-# =========================================
+# ==================================================
 
 async def start(update: Update,
                 context: ContextTypes.DEFAULT_TYPE):
 
+    lang = get_lang(update.effective_chat.id)
+
     await update.message.reply_text(
-        "🤖 Advanced Manager Bot Online"
+        LANG[lang]["start"]
     )
 
-# =========================================
+# ==================================================
+# HELP
+# ==================================================
+
+async def help_command(update: Update,
+                       context: ContextTypes.DEFAULT_TYPE):
+
+    lang = get_lang(update.effective_chat.id)
+
+    await update.message.reply_text(
+        LANG[lang]["help"]
+    )
+
+# ==================================================
+# PING
+# ==================================================
+
+async def ping(update: Update,
+               context: ContextTypes.DEFAULT_TYPE):
+
+    lang = get_lang(update.effective_chat.id)
+
+    await update.message.reply_text(
+        LANG[lang]["pong"]
+    )
+
+# ==================================================
 # MENU
-# =========================================
+# ==================================================
 
 async def menu(update: Update,
                context: ContextTypes.DEFAULT_TYPE):
@@ -203,9 +250,9 @@ async def menu(update: Update,
         reply_markup=reply_markup
     )
 
-# =========================================
-# CALLBACK BUTTON
-# =========================================
+# ==================================================
+# BUTTON HANDLER
+# ==================================================
 
 async def button_handler(update: Update,
                          context: ContextTypes.DEFAULT_TYPE):
@@ -215,18 +262,16 @@ async def button_handler(update: Update,
     await query.answer()
 
     await query.message.reply_text(
-        f"✅ Button: {query.data}"
+        f"✅ {query.data}"
     )
 
-# =========================================
+# ==================================================
 # AUTO DELETE LINKS
 # ONLY ADMIN CAN SEND LINKS
-# =========================================
+# ==================================================
 
-async def auto_delete_links(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE
-):
+async def anti_link(update: Update,
+                    context: ContextTypes.DEFAULT_TYPE):
 
     if not update.message:
         return
@@ -275,9 +320,9 @@ async def auto_delete_links(
         except:
             pass
 
-# =========================================
+# ==================================================
 # MUTE
-# =========================================
+# ==================================================
 
 async def mute(update: Update,
                context: ContextTypes.DEFAULT_TYPE):
@@ -304,9 +349,9 @@ async def mute(update: Update,
         f"{user.first_name}"
     )
 
-# =========================================
+# ==================================================
 # UNMUTE
-# =========================================
+# ==================================================
 
 async def unmute(update: Update,
                  context: ContextTypes.DEFAULT_TYPE):
@@ -317,10 +362,7 @@ async def unmute(update: Update,
     user = update.message.reply_to_message.from_user
 
     permissions = ChatPermissions(
-        can_send_messages=True,
-        can_send_media_messages=True,
-        can_send_other_messages=True,
-        can_add_web_page_previews=True
+        can_send_messages=True
     )
 
     await context.bot.restrict_chat_member(
@@ -336,9 +378,9 @@ async def unmute(update: Update,
         f"{user.first_name}"
     )
 
-# =========================================
+# ==================================================
 # BAN
-# =========================================
+# ==================================================
 
 async def ban(update: Update,
               context: ContextTypes.DEFAULT_TYPE):
@@ -360,9 +402,9 @@ async def ban(update: Update,
         f"{user.first_name}"
     )
 
-# =========================================
-# WARN SYSTEM
-# =========================================
+# ==================================================
+# WARN
+# ==================================================
 
 async def warn(update: Update,
                context: ContextTypes.DEFAULT_TYPE):
@@ -404,9 +446,9 @@ async def warn(update: Update,
             f"{count}/3"
         )
 
-# =========================================
+# ==================================================
 # RESET WARN
-# =========================================
+# ==================================================
 
 async def resetwarn(update: Update,
                     context: ContextTypes.DEFAULT_TYPE):
@@ -424,9 +466,9 @@ async def resetwarn(update: Update,
         LANG[lang]["resetwarn"]
     )
 
-# =========================================
+# ==================================================
 # SET LANGUAGE
-# =========================================
+# ==================================================
 
 async def setlang(update: Update,
                   context: ContextTypes.DEFAULT_TYPE):
@@ -450,12 +492,12 @@ async def setlang(update: Update,
     ] = lang
 
     await update.message.reply_text(
-        LANG[lang]["lang_changed"]
+        LANG[lang]["lang"]
     )
 
-# =========================================
+# ==================================================
 # AFK
-# =========================================
+# ==================================================
 
 async def afk(update: Update,
               context: ContextTypes.DEFAULT_TYPE):
@@ -470,9 +512,9 @@ async def afk(update: Update,
         LANG[lang]["afk"]
     )
 
-# =========================================
+# ==================================================
 # REMOVE AFK
-# =========================================
+# ==================================================
 
 async def remove_afk(update: Update,
                      context: ContextTypes.DEFAULT_TYPE):
@@ -491,9 +533,9 @@ async def remove_afk(update: Update,
             LANG[lang]["afk_off"]
         )
 
-# =========================================
+# ==================================================
 # WELCOME NEW MEMBER
-# =========================================
+# ==================================================
 
 async def welcome(update: Update,
                   context: ContextTypes.DEFAULT_TYPE):
@@ -507,9 +549,9 @@ async def welcome(update: Update,
             f"{user.first_name}"
         )
 
-# =========================================
+# ==================================================
 # MAIN
-# =========================================
+# ==================================================
 
 app = ApplicationBuilder().token(
     TOKEN
@@ -519,6 +561,14 @@ app = ApplicationBuilder().token(
 
 app.add_handler(
     CommandHandler("start", start)
+)
+
+app.add_handler(
+    CommandHandler("help", help_command)
+)
+
+app.add_handler(
+    CommandHandler("ping", ping)
 )
 
 app.add_handler(
@@ -559,16 +609,16 @@ app.add_handler(
     CallbackQueryHandler(button_handler)
 )
 
-# AUTO LINK DELETE
+# AUTO DELETE LINKS
 
 app.add_handler(
     MessageHandler(
         filters.TEXT & ~filters.COMMAND,
-        auto_delete_links
+        anti_link
     )
 )
 
-# REMOVE AFK WHEN USER TALKS
+# REMOVE AFK
 
 app.add_handler(
     MessageHandler(
@@ -586,9 +636,9 @@ app.add_handler(
     )
 )
 
-# =========================================
+# ==================================================
 # RUN BOT
-# =========================================
+# ==================================================
 
 print("BOT ONLINE")
 
